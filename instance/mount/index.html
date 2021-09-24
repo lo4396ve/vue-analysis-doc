@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>mount | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析">
+    
+    <link rel="preload" href="/vue-analysis-doc/assets/css/0.styles.02097279.css" as="style"><link rel="preload" href="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/12.95c8141e.js" as="script"><link rel="prefetch" href="/vue-analysis-doc/assets/js/10.9f3166e1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/11.1c502977.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/13.1d2e93e5.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/14.80092a92.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/15.5b9078c1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/16.0be0c1b0.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/17.90317d43.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/18.e8614e4a.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/19.e82261ac.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/20.4f13b312.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/21.abe276e6.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/22.cf518202.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/23.5c3e7523.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/24.a69abecd.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/25.a3c6a01c.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/26.bcee3417.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/27.0615d803.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/3.6b46658e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/4.c610d016.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/5.216dfe20.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/6.73a8f323.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/7.ff70926e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/8.14590bad.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/9.015ed59b.js">
+    <link rel="stylesheet" href="/vue-analysis-doc/assets/css/0.styles.02097279.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/vue-analysis-doc/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/vue-analysis-doc/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/vue-analysis-doc/simple/" class="sidebar-link">vue缩影版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>创建Vue实例</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/vue-analysis-doc/instance/newVue/" class="sidebar-link">new Vue做了什么</a></li><li><a href="/vue-analysis-doc/instance/mount/" aria-current="page" class="active sidebar-link">mount</a></li><li><a href="/vue-analysis-doc/instance/render/" class="sidebar-link">Render</a></li><li><a href="/vue-analysis-doc/instance/VNode/" class="sidebar-link">VNode</a></li></ul></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>计算属性&amp;侦听器</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="mount"><a href="#mount" class="header-anchor">#</a> mount</h1> <p>前面的_init方法已经为挂载做好了准备，下面分析一下具体是如何挂载的。</p> <p>开发过vue项目的应该都比较熟悉项目入口有一个main.js文件</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token parameter">h</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">$mount</span><span class="token punctuation">(</span><span class="token string">'#app'</span><span class="token punctuation">)</span>
+</code></pre></div><p>这个$mount方法就是暴露出来用于挂载实例的。许多地方都定义了$mount方法，有在原型上直接定义的$mount方法，还有在platform目录下各个不同打包入口也重新定义了$mount方法。之所以这样设计，是把一些通用的逻辑定义在原型上的$mount，针对不同环境，再扩展对应环境需要的特有逻辑。</p> <p>platform/web/entry-runtime.js</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'./runtime/index'</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> Vue
+</code></pre></div><p>我们重点研究的runtime-only版本的入口文件并没有扩展和重写原型上定义的$mount方法，查看原型上的$mount方法，原型$mount定义在platform/web/runtime/index.js:</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'core/index'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> mountComponent <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'core/instance/lifecycle'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span>
+  query<span class="token punctuation">,</span>
+<span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'web/util/index'</span>
+<span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span><span class="token function-variable function">$mount</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span>
+  <span class="token parameter">el</span>
+<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  el <span class="token operator">=</span> el <span class="token operator">&amp;&amp;</span> <span class="token function">query</span><span class="token punctuation">(</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token function">mountComponent</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> el<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>$mount方法接受 el参数，它表示挂载的元素，可以是字符串，也可以是 DOM 对象，如果是字符串在浏览器环境下会调用 query 方法转换成 DOM 对象，最后再调用mountComponent方法，定义在mysrc/core/instance/lifecycle.js 文件中</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">mountComponent</span> <span class="token punctuation">(</span>
+  <span class="token parameter">vm<span class="token punctuation">,</span>
+  el<span class="token punctuation">,</span></span>
+<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  vm<span class="token punctuation">.</span>$el <span class="token operator">=</span> el
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>vm<span class="token punctuation">.</span>$options<span class="token punctuation">.</span>render<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    vm<span class="token punctuation">.</span>$options<span class="token punctuation">.</span>render <span class="token operator">=</span> createEmptyVNode
+  <span class="token punctuation">}</span>
+  <span class="token comment">// callHook(vm, 'beforeMount')</span>
+
+  <span class="token keyword">let</span> updateComponent
+  <span class="token comment">/* istanbul ignore if */</span>
+  <span class="token function-variable function">updateComponent</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    vm<span class="token punctuation">.</span><span class="token function">_update</span><span class="token punctuation">(</span>vm<span class="token punctuation">.</span><span class="token function">_render</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">updateComponent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+  <span class="token comment">// we set this to vm._watcher inside the watcher's constructor</span>
+  <span class="token comment">// since the watcher's initial patch may call $forceUpdate (e.g. inside child</span>
+  <span class="token comment">// component's mounted hook), which relies on vm._watcher being already defined</span>
+  <span class="token keyword">function</span> <span class="token function">noop</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+  <span class="token keyword">new</span> <span class="token class-name">Watcher</span><span class="token punctuation">(</span>vm<span class="token punctuation">,</span> updateComponent<span class="token punctuation">,</span> noop<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+    <span class="token function">before</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>vm<span class="token punctuation">.</span>_isMounted <span class="token operator">&amp;&amp;</span> <span class="token operator">!</span>vm<span class="token punctuation">.</span>_isDestroyed<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment">// callHook(vm, 'beforeUpdate')</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">true</span> <span class="token comment">/* isRenderWatcher */</span><span class="token punctuation">)</span>
+  
+
+  <span class="token comment">// manually mounted instance, call mounted on self</span>
+  <span class="token comment">// mounted is called for render-created child components in its inserted hook</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>vm<span class="token punctuation">.</span>$vnode <span class="token operator">==</span> <span class="token keyword">null</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    vm<span class="token punctuation">.</span>_isMounted <span class="token operator">=</span> <span class="token boolean">true</span>
+    <span class="token comment">// callHook(vm, 'mounted')</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">return</span> vm
+<span class="token punctuation">}</span>
+</code></pre></div><p>这段代码的核心是updateComponent，创建一个渲染Watcher，Watcher的逻辑会在后面介绍响应式的章节分析，目前只需要知道Watcher的内部会调用updateComponent就足够了。而updateComponent方法中会调用vm._update方法，vm._update方法接受vm._render方法的返回结果作为参数，实际上vm._render方法返回的就是虚拟dom（VNode）。下面就开始分析_render方法的实现。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/vue-analysis-doc/instance/newVue/" class="prev">
+        new Vue做了什么
+      </a></span> <span class="next"><a href="/vue-analysis-doc/instance/render/">
+        Render
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" defer></script><script src="/vue-analysis-doc/assets/js/2.233f3245.js" defer></script><script src="/vue-analysis-doc/assets/js/12.95c8141e.js" defer></script>
+  </body>
+</html>

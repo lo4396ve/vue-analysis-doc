@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>介绍 | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析">
+    
+    <link rel="preload" href="/vue-analysis-doc/assets/css/0.styles.02097279.css" as="style"><link rel="preload" href="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/26.bcee3417.js" as="script"><link rel="prefetch" href="/vue-analysis-doc/assets/js/10.9f3166e1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/11.1c502977.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/12.95c8141e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/13.1d2e93e5.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/14.80092a92.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/15.5b9078c1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/16.0be0c1b0.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/17.90317d43.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/18.e8614e4a.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/19.e82261ac.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/20.4f13b312.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/21.abe276e6.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/22.cf518202.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/23.5c3e7523.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/24.a69abecd.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/25.a3c6a01c.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/27.0615d803.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/3.6b46658e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/4.c610d016.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/5.216dfe20.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/6.73a8f323.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/7.ff70926e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/8.14590bad.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/9.015ed59b.js">
+    <link rel="stylesheet" href="/vue-analysis-doc/assets/css/0.styles.02097279.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/vue-analysis-doc/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/vue-analysis-doc/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/vue-analysis-doc/simple/" aria-current="page" class="active sidebar-link">vue缩影版</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/vue-analysis-doc/simple/#介绍" class="sidebar-link">介绍</a></li><li class="sidebar-sub-header"><a href="/vue-analysis-doc/simple/#抽取过程" class="sidebar-link">抽取过程</a></li><li class="sidebar-sub-header"><a href="/vue-analysis-doc/simple/#工具包" class="sidebar-link">工具包</a></li><li class="sidebar-sub-header"><a href="/vue-analysis-doc/simple/#运行" class="sidebar-link">运行</a></li></ul></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>计算属性&amp;侦听器</span> <span class="arrow right"></span></p> <!----></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h2 id="介绍"><a href="#介绍" class="header-anchor">#</a> 介绍</h2> <p>把之前克隆到本地的项目切到simple分支，mysrc存放的就是最初只包含vue初始化和首次挂载逻辑的版本。</p> <p>缩影版vue并不是什么手撸一个vue之类的东西，而是从vue源码中抽取的一个基础骨架，打包出来的源码如果放到vue-project项目中，仅能保证把静态页面渲染出来，最基础的data响应式绑定也不支持。这个版本的目的是为了能更清楚的了解vue源码的整体结构，学习一个庞大的系统，从整体到局部是一个比较好的方法。</p> <h2 id="抽取过程"><a href="#抽取过程" class="header-anchor">#</a> 抽取过程</h2> <p>简单分析如何从vue源码中提取出这个缩影版本的。</p> <h3 id="分析入口"><a href="#分析入口" class="header-anchor">#</a> 分析入口</h3> <p>从入口下手，前面的章节已经分析过了，打包入口文件在 platform/web/entry-runtime.js，打开该文件</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'./runtime/index'</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> Vue
+</code></pre></div><p>继续寻找./runtime/index：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'core/index'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> mountComponent <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'core/instance/lifecycle'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> query <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'web/util/index'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> patch <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./patch'</span>
+
+<span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span>__patch__ <span class="token operator">=</span> patch<span class="token punctuation">;</span>
+
+<span class="token class-name">Vue</span><span class="token punctuation">.</span>prototype<span class="token punctuation">.</span><span class="token function-variable function">$mount</span> <span class="token operator">=</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">el</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  el <span class="token operator">=</span> el <span class="token operator">&amp;&amp;</span> <span class="token function">query</span><span class="token punctuation">(</span>el<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token keyword">return</span> <span class="token function">mountComponent</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> el<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> Vue
+</code></pre></div><p>先忽略其他代码，只看这部分，Vue是从core/index引入的，并且在Vue原型上扩展了__parch__方法和$mount方法，这两个方法都是与渲染组件相关，其逻辑后面再分析。先继续寻找core/index。</p> <p>打开src/core/index.js</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'./instance/index'</span>
+<span class="token keyword">import</span> <span class="token punctuation">{</span> initGlobalAPI <span class="token punctuation">}</span> <span class="token keyword">from</span> <span class="token string">'./global-api/index'</span>
+
+<span class="token function">initGlobalAPI</span><span class="token punctuation">(</span>Vue<span class="token punctuation">)</span>
+
+Vue<span class="token punctuation">.</span>version <span class="token operator">=</span> <span class="token string">'__VERSION__'</span>
+
+<span class="token keyword">export</span> <span class="token keyword">default</span> Vue
+</code></pre></div><p>从./instance/index引入Vue，然后执行了initGlobalAPI方法，先不管initGlobalAPI，继续挖./instance/index：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">function</span> <span class="token function">Vue</span> <span class="token punctuation">(</span><span class="token parameter">options</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// init方法啊在initMixin被定义</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">_init</span><span class="token punctuation">(</span>options<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>终于找到了Vue的定义。代码很简洁，只执行了this._init方法。这也是作者的一个设计思路，Vue本质是一个Function构造方法，它的原型 prototype 以及它本身都扩展了一系列的方法和属性，在扩展的方法里面处理其他的逻辑。</p> <h2 id="工具包"><a href="#工具包" class="header-anchor">#</a> 工具包</h2> <p>源码提供了很多工具方法，比如isObject判断是否对象类型的方法，我们的重点并不在他们身上，所以对于工具目录不做太多分析，也没有抽离里面的方法，整个目录复制过去。</p> <p>工具目录：</p> <ul><li>shared // shared提供浏览器端和服务端是通用的方法</li> <li>src/core/util // 在创建操作Vue实例和操作VNode（虚拟dom）时用到的一些工具方法</li> <li>src/core/instance/render-helpers // 提供与渲染render相关的辅助工具，后面用到的时候具体再分析</li> <li>src/core/vdom/helpers // vdom管理着虚拟dom（VNode），而vdom/helpers提供了与虚拟dom有关的方法，比如判断组件是否动态组件</li> <li>platform/web/util // 专门提供给web浏览器端使用的工具方法，比如判断一个标签是不是html标准标签</li></ul> <h2 id="运行"><a href="#运行" class="header-anchor">#</a> 运行</h2> <p>执行</p> <div class="language-js extra-class"><pre class="language-js"><code>npm install
+npm run dev<span class="token operator">:</span>esm
+</code></pre></div><p>在dist目录下会生成vue.runtime.esm.js。</p> <p>把vue.runtime.esm.js放在准备好的vue-project项目的src目录下，修改main.js和APP.vue</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// main.js</span>
+<span class="token keyword">import</span> Vue <span class="token keyword">from</span> <span class="token string">'./vue.runtime.esm.js'</span>
+<span class="token keyword">import</span> App <span class="token keyword">from</span> <span class="token string">'./App.vue'</span>
+<span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token function-variable function">render</span><span class="token operator">:</span> <span class="token parameter">h</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token function">h</span><span class="token punctuation">(</span>App<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">$mount</span><span class="token punctuation">(</span><span class="token string">'#app'</span><span class="token punctuation">)</span>
+
+<span class="token comment">// APP.vue</span>
+<span class="token operator">&lt;</span>template<span class="token operator">&gt;</span>
+  <span class="token operator">&lt;</span>div id<span class="token operator">=</span><span class="token string">&quot;app&quot;</span><span class="token operator">&gt;</span>
+    <span class="token operator">&lt;</span>div<span class="token operator">&gt;</span>测试<span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">&gt;</span>
+  <span class="token operator">&lt;</span><span class="token operator">/</span>div<span class="token operator">&gt;</span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>template<span class="token operator">&gt;</span>
+<span class="token operator">&lt;</span>script<span class="token operator">&gt;</span>
+<span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token punctuation">{</span>
+  <span class="token function">data</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token operator">&lt;</span><span class="token operator">/</span>script<span class="token operator">&gt;</span>
+</code></pre></div><p>运行vue-project项目，APP.vue渲染成功说明vue.runtime.esm.js是没有问题的。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/vue-analysis-doc/ready/think/" class="prev">
+        动手前的思考
+      </a></span> <span class="next"><a href="/vue-analysis-doc/instance/newVue/">
+        new Vue做了什么
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" defer></script><script src="/vue-analysis-doc/assets/js/2.233f3245.js" defer></script><script src="/vue-analysis-doc/assets/js/26.bcee3417.js" defer></script>
+  </body>
+</html>

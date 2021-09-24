@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>计算属性 | Vue 源码解析</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="Vue源码解析">
+    
+    <link rel="preload" href="/vue-analysis-doc/assets/css/0.styles.02097279.css" as="style"><link rel="preload" href="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/2.233f3245.js" as="script"><link rel="preload" href="/vue-analysis-doc/assets/js/8.14590bad.js" as="script"><link rel="prefetch" href="/vue-analysis-doc/assets/js/10.9f3166e1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/11.1c502977.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/12.95c8141e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/13.1d2e93e5.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/14.80092a92.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/15.5b9078c1.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/16.0be0c1b0.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/17.90317d43.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/18.e8614e4a.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/19.e82261ac.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/20.4f13b312.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/21.abe276e6.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/22.cf518202.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/23.5c3e7523.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/24.a69abecd.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/25.a3c6a01c.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/26.bcee3417.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/27.0615d803.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/3.6b46658e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/4.c610d016.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/5.216dfe20.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/6.73a8f323.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/7.ff70926e.js"><link rel="prefetch" href="/vue-analysis-doc/assets/js/9.015ed59b.js">
+    <link rel="stylesheet" href="/vue-analysis-doc/assets/css/0.styles.02097279.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/vue-analysis-doc/" class="home-link router-link-active"><!----> <span class="site-name">Vue 源码解析</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <!----></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><!---->  <ul class="sidebar-links"><li><a href="/vue-analysis-doc/introduction/" class="sidebar-link">介绍</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>准备工作</span> <span class="arrow right"></span></p> <!----></section></li><li><a href="/vue-analysis-doc/simple/" class="sidebar-link">vue缩影版</a></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>创建Vue实例</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading"><span>Observer</span> <span class="arrow right"></span></p> <!----></section></li><li><section class="sidebar-group collapsable depth-0"><p class="sidebar-heading open"><span>计算属性&amp;侦听器</span> <span class="arrow down"></span></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/vue-analysis-doc/computed&amp;watch/computed/" aria-current="page" class="active sidebar-link">计算属性</a><ul class="sidebar-sub-headers"></ul></li><li><a href="/vue-analysis-doc/computed&amp;watch/watch/" class="sidebar-link">侦听器watch</a></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="计算属性"><a href="#计算属性" class="header-anchor">#</a> 计算属性</h1> <p>前面介绍了vue响应式，并提供了data响应式版本，这一节在state分支（data响应式版本）基础上添加计算属性的源码，切换到computed分支即可查看<a href="https://github.com/lo4396ve/vue-analysis/tree/computed" target="_blank" rel="noopener noreferrer">完整代码<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>。</p> <h3 id="计算属性使用方法"><a href="#计算属性使用方法" class="header-anchor">#</a> 计算属性使用方法</h3> <p>在分析计算属性源码之前先回顾一下<a href="https://cn.vuejs.org/v2/api/#computed" target="_blank" rel="noopener noreferrer">官方计算属性<span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a>使用方法</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">var</span> vm <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Vue</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  data<span class="token operator">:</span> <span class="token punctuation">{</span> firstName<span class="token operator">:</span> <span class="token string">'zhang'</span><span class="token punctuation">,</span> lastName<span class="token operator">:</span> <span class="token string">'san'</span><span class="token punctuation">,</span> age<span class="token operator">:</span> <span class="token number">18</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+  computed<span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token comment">// 仅读取</span>
+    <span class="token function-variable function">fullName</span><span class="token operator">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>firstName <span class="token operator">+</span> <span class="token keyword">this</span><span class="token punctuation">.</span>lastName
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    _age<span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token function-variable function">get</span><span class="token operator">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">return</span> <span class="token keyword">this</span><span class="token punctuation">.</span>age <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">}</span><span class="token punctuation">,</span>
+      <span class="token function-variable function">set</span><span class="token operator">:</span> <span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token parameter">v</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>age <span class="token operator">=</span> v<span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>计算属性依赖data某个值，支持直接写成函数形式，也可以写成对象形式，用户自定义get/set方法。了解完使用方式，接下来开始分析源码怎么实现的。</p> <h3 id="源码分析"><a href="#源码分析" class="header-anchor">#</a> 源码分析</h3> <p><em>首先切换到computed分支</em></p> <h5 id="初始化过程"><a href="#初始化过程" class="header-anchor">#</a> 初始化过程</h5> <p>打开mysrc/core/instance/state.js，找到initState方法：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">initState</span> <span class="token punctuation">(</span><span class="token parameter">vm</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  vm<span class="token punctuation">.</span>_watchers <span class="token operator">=</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token keyword">const</span> opts <span class="token operator">=</span> vm<span class="token punctuation">.</span>$options
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>opts<span class="token punctuation">.</span>data<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">initData</span><span class="token punctuation">(</span>vm<span class="token punctuation">)</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">observe</span><span class="token punctuation">(</span>vm<span class="token punctuation">.</span>_data <span class="token operator">=</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token boolean">true</span> <span class="token comment">/* asRootData */</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>opts<span class="token punctuation">.</span>computed<span class="token punctuation">)</span> <span class="token function">initComputed</span><span class="token punctuation">(</span>vm<span class="token punctuation">,</span> opts<span class="token punctuation">.</span>computed<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>initState方法通过调用initComputed(vm, opts.computed)添加了对computed的处理逻辑。</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> computedWatcherOptions <span class="token operator">=</span> <span class="token punctuation">{</span> lazy<span class="token operator">:</span> <span class="token boolean">true</span> <span class="token punctuation">}</span>
+<span class="token keyword">function</span> <span class="token function">initComputed</span> <span class="token punctuation">(</span><span class="token parameter">vm<span class="token punctuation">,</span> computed</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// $flow-disable-line</span>
+  <span class="token keyword">const</span> watchers <span class="token operator">=</span> vm<span class="token punctuation">.</span>_computedWatchers <span class="token operator">=</span> Object<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token keyword">null</span><span class="token punctuation">)</span>
+  <span class="token comment">// computed properties are just getters during SSR</span>
+  <span class="token comment">// 不考虑SSR</span>
+  <span class="token keyword">const</span> isSSR <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
+
+  <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">const</span> key <span class="token keyword">in</span> computed<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> userDef <span class="token operator">=</span> computed<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+    <span class="token keyword">const</span> getter <span class="token operator">=</span> <span class="token keyword">typeof</span> userDef <span class="token operator">===</span> <span class="token string">'function'</span> <span class="token operator">?</span> userDef <span class="token operator">:</span> userDef<span class="token punctuation">.</span>get
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>isSSR<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token comment">// create internal watcher for the computed property.</span>
+      watchers<span class="token punctuation">[</span>key<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Watcher</span><span class="token punctuation">(</span>
+        vm<span class="token punctuation">,</span>
+        getter <span class="token operator">||</span> noop<span class="token punctuation">,</span>
+        noop<span class="token punctuation">,</span>
+        computedWatcherOptions
+      <span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token punctuation">(</span>key <span class="token keyword">in</span> vm<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token function">defineComputed</span><span class="token punctuation">(</span>vm<span class="token punctuation">,</span> key<span class="token punctuation">,</span> userDef<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>首先创建computedWatcherOptions对象，他的作用稍后分析。在initComputed方法内部遍历computed，对computed中每一个属性创建Watcher实例，保存在vm._computedWatchers中。所以每一个computed都会创建一个watcher，称这个watcher为<code>computed watcher</code>最后依次调用了defineComputed方法</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">function</span> <span class="token function">defineComputed</span> <span class="token punctuation">(</span>
+  <span class="token parameter">target<span class="token punctuation">,</span>
+  key<span class="token punctuation">,</span>
+  userDef</span>
+<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token comment">// const shouldCache = !isServerRendering()</span>
+  <span class="token comment">// 在浏览器环境下（非SSR）isServerRendering()返回false，这里直接令shouldCache=true</span>
+  <span class="token keyword">const</span> shouldCache <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">typeof</span> userDef <span class="token operator">===</span> <span class="token string">'function'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    sharedPropertyDefinition<span class="token punctuation">.</span>get <span class="token operator">=</span> shouldCache
+      <span class="token operator">?</span> <span class="token function">createComputedGetter</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span>
+      <span class="token operator">:</span> <span class="token function">createGetterInvoker</span><span class="token punctuation">(</span>userDef<span class="token punctuation">)</span>
+    sharedPropertyDefinition<span class="token punctuation">.</span>set <span class="token operator">=</span> noop
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    sharedPropertyDefinition<span class="token punctuation">.</span>get <span class="token operator">=</span> userDef<span class="token punctuation">.</span>get
+      <span class="token operator">?</span> shouldCache <span class="token operator">&amp;&amp;</span> userDef<span class="token punctuation">.</span>cache <span class="token operator">!==</span> <span class="token boolean">false</span>
+        <span class="token operator">?</span> <span class="token function">createComputedGetter</span><span class="token punctuation">(</span>key<span class="token punctuation">)</span>
+        <span class="token operator">:</span> <span class="token function">createGetterInvoker</span><span class="token punctuation">(</span>userDef<span class="token punctuation">.</span>get<span class="token punctuation">)</span>
+      <span class="token operator">:</span> noop
+    sharedPropertyDefinition<span class="token punctuation">.</span>set <span class="token operator">=</span> userDef<span class="token punctuation">.</span>set <span class="token operator">||</span> noop
+  <span class="token punctuation">}</span>
+
+  Object<span class="token punctuation">.</span><span class="token function">defineProperty</span><span class="token punctuation">(</span>target<span class="token punctuation">,</span> key<span class="token punctuation">,</span> sharedPropertyDefinition<span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>在defineComputed接受三个参数，target就是vm实例，key是computed的一个属性，userDef是key的值，userDef是函数或者对象类型。然后根据userDef的类型创建key的描述对象sharedPropertyDefinition，主要调用createComputedGetter或者createGetterInvoker方法生成其get方法。由于浏览器环境下shouldCache值为true，所以执行的是createComputedGetter方法来生成get方法；而其set方法为空函数noop，或者用户如果自定义了set方法使用用户自定义的set方法。这也就解释了在vue中，默认情况下用户直接修改computed计算属性的值是不生效的，除非用户手动提供set方法。最后通过defineProperty把计算属性变成响应式数据，并扩展到target(vm实例)上。这也就是为什么直接使用this.xxx可以直接访问得到计算属性的值。</p> <h5 id="创建getter方法"><a href="#创建getter方法" class="header-anchor">#</a> 创建getter方法</h5> <p>接着分析一下createComputedGetter方法是如何帮每一个计算属性创建get方法的</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">function</span> <span class="token function">createComputedGetter</span> <span class="token punctuation">(</span><span class="token parameter">key</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">return</span> <span class="token keyword">function</span> <span class="token function">computedGetter</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">const</span> watcher <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_computedWatchers <span class="token operator">&amp;&amp;</span> <span class="token keyword">this</span><span class="token punctuation">.</span>_computedWatchers<span class="token punctuation">[</span>key<span class="token punctuation">]</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>watcher<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>watcher<span class="token punctuation">.</span>dirty<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        watcher<span class="token punctuation">.</span><span class="token function">evaluate</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span>Dep<span class="token punctuation">.</span>target<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        watcher<span class="token punctuation">.</span><span class="token function">depend</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+      <span class="token keyword">return</span> watcher<span class="token punctuation">.</span>value
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>createComputedGetter接受一个参数key，也就是计算属性的key，并返回computedGetter方法作为计算属性的get方法，上面讲过在initComputed方法中，对每个计算属性都创建了一个Watcher实例，并存入到vm._computedWatchers中。首先利用key从vm._computedWatchers获取当前的Watcher实例。因为计算属性在创建Watcher实例的时候lazy属性都设为了true（const computedWatcherOptions = { lazy: true }），所以会执行watcher.evaluate()方法。</p> <p>打开mysrc/core/observer/watcher.js，回顾一下Watcher的逻辑，再分析evaluate方法。</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">export</span> <span class="token keyword">default</span> <span class="token keyword">class</span> <span class="token class-name">Watcher</span> <span class="token punctuation">{</span>
+  <span class="token function">constructor</span> <span class="token punctuation">(</span>
+    <span class="token parameter">vm<span class="token punctuation">,</span>
+    expOrFn<span class="token punctuation">,</span>
+    cb<span class="token punctuation">,</span>
+    options<span class="token punctuation">,</span>
+    isRenderWatcher</span>
+  <span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>vm <span class="token operator">=</span> vm
+
+    <span class="token comment">// 省略中间部分代码</span>
+    <span class="token operator">...</span>
+
+    <span class="token keyword">this</span><span class="token punctuation">.</span>dirty <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>lazy <span class="token comment">// for lazy watchers</span>
+    <span class="token comment">// parse expression for getter</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">typeof</span> expOrFn <span class="token operator">===</span> <span class="token string">'function'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>getter <span class="token operator">=</span> expOrFn
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span>getter <span class="token operator">=</span> <span class="token function">parsePath</span><span class="token punctuation">(</span>expOrFn<span class="token punctuation">)</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token keyword">this</span><span class="token punctuation">.</span>getter<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>getter <span class="token operator">=</span> noop
+        process<span class="token punctuation">.</span>env<span class="token punctuation">.</span><span class="token constant">NODE_ENV</span> <span class="token operator">!==</span> <span class="token string">'production'</span> <span class="token operator">&amp;&amp;</span> <span class="token function">warn</span><span class="token punctuation">(</span>
+          <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">Failed watching path: &quot;</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span>expOrFn<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">&quot; </span><span class="token template-punctuation string">`</span></span> <span class="token operator">+</span>
+          <span class="token string">'Watcher only accepts simple dot-delimited paths. '</span> <span class="token operator">+</span>
+          <span class="token string">'For full control, use a function instead.'</span><span class="token punctuation">,</span>
+          vm
+        <span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>value <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>lazy
+      <span class="token operator">?</span> <span class="token keyword">undefined</span>
+      <span class="token operator">:</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+
+  <span class="token function">get</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token function">pushTarget</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+    <span class="token keyword">let</span> value
+    <span class="token keyword">const</span> vm <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>vm
+    <span class="token keyword">try</span> <span class="token punctuation">{</span>
+      value <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">getter</span><span class="token punctuation">.</span><span class="token function">call</span><span class="token punctuation">(</span>vm<span class="token punctuation">,</span> vm<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span>e<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>user<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">handleError</span><span class="token punctuation">(</span>e<span class="token punctuation">,</span> vm<span class="token punctuation">,</span> <span class="token template-string"><span class="token template-punctuation string">`</span><span class="token string">getter for watcher &quot;</span><span class="token interpolation"><span class="token interpolation-punctuation punctuation">${</span><span class="token keyword">this</span><span class="token punctuation">.</span>expression<span class="token interpolation-punctuation punctuation">}</span></span><span class="token string">&quot;</span><span class="token template-punctuation string">`</span></span><span class="token punctuation">)</span>
+      <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        <span class="token keyword">throw</span> e
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span> <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+      <span class="token comment">// &quot;touch&quot; every property so they are all tracked as</span>
+      <span class="token comment">// dependencies for deep watching</span>
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>deep<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token function">traverse</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span>
+      <span class="token punctuation">}</span>
+      <span class="token function">popTarget</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+      <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">cleanupDeps</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">return</span> value
+  <span class="token punctuation">}</span>
+
+  <span class="token comment">/**
+   * Evaluate the value of the watcher.
+   * This only gets called for lazy watchers.
+   */</span>
+  <span class="token function">evaluate</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>value <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>dirty <span class="token operator">=</span> <span class="token boolean">false</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>计算属性创建Watcher，lazy的值为true，所以new Watcher时在构造函数里面只是对参数做了解析工作，并没有执行this.get()，也没有其他逻辑。</p> <h5 id="依赖收集"><a href="#依赖收集" class="header-anchor">#</a> 依赖收集</h5> <p>接下来分析计算属性<code>fullName</code>依赖的数据<code>firstName和lastName</code>收集<code>computed watcher</code>的过程，以及计算属性<code>fullName</code>收集<code>render watcher</code>的过程。</p> <p>evaluate方法内部执行了this.get()方法，并且把dirty设为了false。this.get()方法内部会执行pushTarget(this)，也就会把计算属性的watcher赋给Dep.target，也就意味着当前正在计算的watcher就是这个<code>computed watcher</code>。</p> <p>接着会在this.get()方法里面执行this.getter()，this.getter就是传给Watcher的expOrFn参数，也就是<code>return this.firstName + this.lastName</code>。我们知道在处理计算属性之前已经执行过initState，这时候访问会触发他们的getter，就会把当前正在计算的watcher（也就是Dep.target）添加到他们自己持有的dep，换言之就是当前的<code>computed watcher</code>订阅了firstName和lastName的变化。</p> <blockquote><p>到此为止，已经分析了computed初始化过程，以及computed与data依赖绑定的过程。初始化时，会对每一个计算属性创建一个计算属性的Watcher<code>computed watcher</code>，然后利用defineProperty使其变成响应式，并为其创建getter方法，在getter方法内部执行evaluate方法然后实现计算属性与data依赖的绑定。记住这是在计算属性的getter的方法内部执行的，也就是说如果程序不访问计算属性就不会触发其getter。非常重要的一点是initComputed和initData都是在initState内部执行的，在initState之后才执行的vm.$mount进而执行mountComponent进而创建<code>render Watcher</code>，也就是说<code>computed watcher</code>在<code>render Wtcher</code>之前创建的。当创建render Wtcher时，会执行render方法，render方法内部会访问所有的data属性，所以<code>firstName</code>持有的dep会收集<code>render Watcher</code>，<code>firstName</code>持有的dep此时收集了两个watcher，分别是<code>computed watcher</code>和<code>render Watcher</code>。但是对于计算属性来说，如果模板没有使用计算属性的值，就不会访问其值，也就不会触发其getter，所以只有模板使用的计算属性才会被<code>render Watcher</code>订阅。</p></blockquote> <h5 id="notify-派发通知"><a href="#notify-派发通知" class="header-anchor">#</a> notify 派发通知</h5> <p>接着分析当data数据发生变化，计算属性是如何更新的。假设<code>fullname</code>的值发生变化，则会通知订阅<code>fullname</code>的所有watcher执行update方法。打开mysrc/core/observer/watcher.js，找到update方法</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token function">update</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>lazy<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span>dirty <span class="token operator">=</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>sync<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token function">queueWatcher</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p><code>fullname</code>被<code>computed watcher</code>和<code>render Watcher</code>订阅，首选执行<code>computed watcher</code>的update，计算属性的watcher的lazy为true，所以对于<code>computed watcher</code>而言，仅仅把this.dirty设为了true。随后会触发<code>render Watcher</code>的update方法，对于<code>render Watcher</code>最后会执行queueWatcher(this)。queueWatcher的逻辑在上一节分析过，其最终目的是在下一个tick中执行render渲染逻辑。在执行render时，如果模板使用了计算属性<code>fullName</code>则会触发其getter，这是才去计算fullName最新的值，如果模板没有使用</p> <p>可以看到如果只有<code>fullname</code>发生改变，计算属性<code>fullName</code>并不会立即计算最新值，只有模板使用了<code>fullName</code>，才会访问并触发它的getter，这时候才开始计算最新值。这也就是为什么官方文档会说计算属性有缓存效果。</p></div> <footer class="page-edit"><!----> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/vue-analysis-doc/observer/Notify/" class="prev">
+        Notify
+      </a></span> <span class="next"><a href="/vue-analysis-doc/computed&amp;watch/watch/">
+        侦听器watch
+      </a>
+      →
+    </span></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/vue-analysis-doc/assets/js/app.0f9a5d9f.js" defer></script><script src="/vue-analysis-doc/assets/js/2.233f3245.js" defer></script><script src="/vue-analysis-doc/assets/js/8.14590bad.js" defer></script>
+  </body>
+</html>
